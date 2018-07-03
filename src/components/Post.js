@@ -11,6 +11,9 @@ import {
   TextInput
 } from 'react-native';
 
+import InputComentario from './InputComentario'
+import Likes from './Likes'
+
 const width = Dimensions.get('screen').width;
 
 export default class Post extends Component {
@@ -19,14 +22,9 @@ export default class Post extends Component {
     super(props);
     this.state = {
       foto: this.props.foto,
-      valorComentario: '',
     }
   }
 
-  carregaIcone(likeada){
-    return likeada ? require('../../resources/imgs/s2-check.png') :
-    require('../../resources/imgs/s2.png')
-  }
 
   like() {
     const {foto} = this.state
@@ -52,16 +50,7 @@ export default class Post extends Component {
     this.setState({foto: fotoAtualizada});
   }
 
-  exibeLikes(likers) {
-    if(likers.length <= 0)
-    return;
 
-    return (
-      <Text style={styles.likes}>
-        {likers.length} {likers.length > 1 ? 'curtidas' : 'curtida'}
-      </Text>
-    );
-  }
 
   exibeLegenda(foto){
     if(foto.comentario === '') return;
@@ -74,23 +63,23 @@ export default class Post extends Component {
     )
   }
 
-  adicionaComentario(){
-    if(this.state.valorComentario === '')
+  adicionaComentario(valorComentario, inputComentario){
+    if(valorComentario === '')
     return;
 
     const novaLista = [...this.state.foto.comentarios, {
-      id: this.state.valorComentario,
+      id: valorComentario,
       login: 'meuUsuario',
-      texto: this.state.valorComentario,
+      texto: valorComentario,
     }];
-    
+
     const fotoAtualizada = {
       ...this.state.foto,
       comentarios: novaLista,
     }
 
-    this.setState({foto: fotoAtualizada, valorComentario: ''});
-    this.inputComentario.clear();
+    this.setState({foto: fotoAtualizada});
+    inputComentario.clear();
   }
 
   render() {
@@ -108,11 +97,11 @@ export default class Post extends Component {
           style={styles.fotoPost} />
 
         <View style={styles.rodape}>
-          <TouchableOpacity onPress={this.like.bind(this)}>
-            <Image source={this.carregaIcone(foto.likeada)}
-              style={styles.botaoDeLike} />
-          </TouchableOpacity>
-          {this.exibeLikes(foto.likers)}
+
+          <Likes
+            likeCallback={this.like.bind(this)}
+            foto={foto}
+            />
 
           {this.exibeLegenda(foto)}
 
@@ -122,18 +111,9 @@ export default class Post extends Component {
               <Text>{comentario.texto}</Text>
             </View>
           )}
-          <View style={styles.novoComentario}>
-            <TextInput style={styles.input}
-              placeholder="Adicione um comentário..."
-              underlineColorAndroid='transparent'
-              ref={input => this.inputComentario = input}
-              onChangeText={texto => this.setState({valorComentario: texto})}/>
-            <TouchableOpacity onPress={this.adicionaComentario.bind(this)}>
-              <Image style={styles.icone}
-                source={require('../../resources/imgs/send.png')} />
-            </TouchableOpacity>
-          </View>
 
+          <InputComentario
+            comentarioCallback={this.adicionaComentario.bind(this)}/>
 
         </View>
       </View>
@@ -160,10 +140,6 @@ const styles = StyleSheet.create({
   rodape: {
     margin: 10
   },
-  botaoDeLike: {
-    width: 40,
-    height: 40
-  },
   likes: {
     fontWeight: 'bold'
   },
@@ -174,20 +150,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginRight: 5
   },
-  input: {
-    height: 40,
-    flex: 1
-  },
-  novoComentario: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd'
-  },
-  icone: {
-    width: 30,
-    height: 30
-  }
-
 
 })

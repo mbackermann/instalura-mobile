@@ -29,7 +29,7 @@ export default class InstaluraMobile extends Component {
   }
 
   componentDidMount(){
-    fetch('http://10.0.2.2:8080/api/public/fotos/rafael')
+    fetch('http://localhost:8080/api/public/fotos/rafael')
       .then( response => response.json())
       .then( json => this.setState({fotos: json}))
   }
