@@ -26,32 +26,6 @@ export default class Post extends Component {
   }
 
 
-  like() {
-    const {foto} = this.state
-    let novaLista = [];
-
-    if(!foto.likeada){
-      novaLista = [
-        ...foto.likers,
-        {login: 'meuUsuário'}
-      ]
-    }else{
-      novaLista = foto.likers.filter((liker) => {
-        liker.login !== 'meuUsuário'
-      })
-    }
-
-    const fotoAtualizada = {
-      ...foto,
-      likeada: !foto.likeada,
-      likers: novaLista
-    }
-
-    this.setState({foto: fotoAtualizada});
-  }
-
-
-
   exibeLegenda(foto){
     if(foto.comentario === '') return;
 
@@ -63,28 +37,10 @@ export default class Post extends Component {
     )
   }
 
-  adicionaComentario(valorComentario, inputComentario){
-    if(valorComentario === '')
-    return;
-
-    const novaLista = [...this.state.foto.comentarios, {
-      id: valorComentario,
-      login: 'meuUsuario',
-      texto: valorComentario,
-    }];
-
-    const fotoAtualizada = {
-      ...this.state.foto,
-      comentarios: novaLista,
-    }
-
-    this.setState({foto: fotoAtualizada});
-    inputComentario.clear();
-  }
 
   render() {
 
-    const {foto} = this.state;
+    const {foto, likeCallback, comentarioCallback } = this.props;
 
     return (
       <View>
@@ -99,7 +55,7 @@ export default class Post extends Component {
         <View style={styles.rodape}>
 
           <Likes
-            likeCallback={this.like.bind(this)}
+            likeCallback={likeCallback}
             foto={foto}
             />
 
@@ -113,7 +69,8 @@ export default class Post extends Component {
           )}
 
           <InputComentario
-            comentarioCallback={this.adicionaComentario.bind(this)}/>
+            comentarioCallback={comentarioCallback}
+            foto={foto}/>
 
         </View>
       </View>

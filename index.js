@@ -1,4 +1,27 @@
-import { AppRegistry } from 'react-native';
-import App from './App';
+import { Navigation } from 'react-native-navigation';
+import { AsyncStorage } from 'react-native';
+import Feed from './src/components/Feed';
+import Login from './src/screens/Login';
 
-AppRegistry.registerComponent('InstaluraMobile', () => App);
+Navigation.registerComponent('Login', () => Login);
+Navigation.registerComponent('Feed', () => Feed);
+
+AsyncStorage.getItem('token')
+.then((token) => {
+  if(token){
+    return {
+      screen: 'Feed',
+      title: 'Instalura'
+    }
+  }
+
+  return {
+    screen: 'Login',
+    navigatorStyle: {
+      navBarHidden: true
+    }
+  }
+})
+.then(screen => {
+  Navigation.startSingleScreenApp({screen})
+});
